@@ -6,6 +6,9 @@
     <title>Wafelkomat</title>
     <style>
         :root {
+			color-scheme: light;
+			background-color: #f5e9d3 !important;
+			color: #3e2723 !important;
             --primary-color: #6d4c41;
             --accent-color: #f57c00;
             --bg-color: #f5e9d3;
@@ -128,6 +131,7 @@
         .btn-payment:active {
             transform: scale(0.95);
         }
+		
 
         footer {
             margin-top: auto;
@@ -140,6 +144,30 @@
             color: #d32f2f;
             font-weight: bold;
         }
+		
+		.acceptance-box {
+			margin: 20px 0;
+			padding: 10px;
+			border: 2px solid transparent;
+			border-radius: 8px;
+			transition: all 0.3s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+		}
+
+		.acceptance-box.error {
+			border-color: #d32f2f;
+			background-color: rgba(211, 47, 47, 0.1);
+		}
+
+		.btn-payment.disabled {
+			background-color: #a0a0a0 !important;
+			box-shadow: none !important;
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
 		
     </style>
 </head>
@@ -183,7 +211,16 @@
         </div>
 
 		
-        <a href="https://suppi.pl/wafelek" target="_blank" rel="noopener noreferrer" class="btn-payment">PRZEJDŹ DO PŁATNOŚCI</a>
+        <div class="acceptance-box" id="check-container">
+			<input type="checkbox" id="instr-check">
+			<label for="instr-check" style="font-weight: bold; font-size: 14px;">
+				Zapoznałem się z instrukcją doładowania konta
+			</label>
+		</div>
+
+		<a href="https://suppi.pl/wafelek" target="_blank" rel="noopener noreferrer" class="btn-payment disabled" id="pay-link">
+			PRZEJDŹ DO PŁATNOŚCI
+		</a>
 
 		<br>
 
@@ -200,6 +237,30 @@
             Wiadomość z tokenem powinna dotrzeć w ciągu kilku minut (sprawdź SPAM). Problemy z płatnością lub automatem? Kontakt: Jan Wójcik (322097@stud.umk.pl)
         </footer>
     </div>
+
+	<script>
+		const checkbox = document.getElementById('instr-check');
+		const payLink = document.getElementById('pay-link');
+		const container = document.getElementById('check-container');
+
+		checkbox.addEventListener('change', function() {
+			if (this.checked) {
+				payLink.classList.remove('disabled');
+				container.classList.remove('error');
+			} else {
+				payLink.classList.add('disabled');
+			}
+		});
+
+		payLink.addEventListener('click', function(e) {
+			if (!checkbox.checked) {
+				e.preventDefault();
+				container.classList.add('error');
+				container.style.transform = 'translateX(5px)';
+				setTimeout(() => container.style.transform = 'translateX(0)', 100);
+			}
+		});
+	</script>
 
 </body>
 </html>
