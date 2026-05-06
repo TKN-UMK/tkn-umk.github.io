@@ -8,7 +8,7 @@
         :root {
 			color-scheme: light;
 			background-color: #f5e9d3 !important;
-			color: #3e2723 !1;
+			color: #3e2723 !important;
             --primary-color: #6d4c41;
             --accent-color: #f57c00;
             --bg-color: #f5e9d3;
@@ -124,10 +124,18 @@
 			margin-top: 15px;
 			border-top: 2px solid var(--bg-color);
 			padding-top: 15px;
-		}
+			overflow: hidden;
+			max-height: 1000px;
+			transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease, padding 0.4s ease;
+			opacity: 1;
+		}	
 
 		.instructions.collapsed .instructions-content {
-			display: none;
+			max-height: 0;
+			opacity: 0;
+			margin-top: 0;
+			padding-top: 0;
+			border-top-color: transparent;
 		}
 
 		.instructions.collapsed h2::after {
@@ -253,20 +261,43 @@
 			z-index: 10;
 		}
 		
+		.dashed-box {
+			font-size: 18px;
+			text-align: left;
+			background: white;
+			padding: 20px;
+			border-radius: 12px;
+			margin: 5px;
+			margin-bottom: 15px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+			max-width: 500px;
+			box-sizing: border-box;
+			border: 2px dashed var(--accent-color);
+			
+		}
+		
     </style>
 </head>
 <body>
 
     <div class="container">
+		
         <header>
 			<div class="wafer-container">
 				<img src="wafelkomat.svg"/>
 			</div>
+			
+			<div class="dashed-box">
+			<strong>Nowość!</strong> <a href="#" class="inline-link" onclick="focusSection(event, 'sekcja-identyfikatory')">Aplikacja</a> na telefon jako identyfikator do automatu
+		</div>
+			
 			<div class="wafer-container">
 				<img src="teatralny.png">
 			</div>
             <div class="price-badge">Cena: 2,00 zł / szt.</div>
         </header>
+		
+		
 
 		<div class="instructions">
 			<h2>Jak działa Wafelkomat?</h2>
