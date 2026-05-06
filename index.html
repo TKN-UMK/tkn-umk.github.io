@@ -125,7 +125,6 @@
 			border-top: 2px solid var(--bg-color);
 			padding-top: 15px;
 			overflow: hidden;
-			max-height: 1000px;
 			transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease, padding 0.4s ease;
 			opacity: 1;
 		}	
@@ -385,8 +384,16 @@
             }
 
             header.addEventListener('click', () => {
-                section.classList.toggle('collapsed');
-            });
+				const content = section.querySelector('.instructions-content');
+				const isCollapsed = section.classList.toggle('collapsed');
+				
+				if (isCollapsed) {
+					content.style.maxHeight = '0px';
+				} else {
+					// scrollHeight podaje realną wysokość treści w pikselach
+					content.style.maxHeight = content.scrollHeight + "px";
+				}
+			});
         });
 
         const checkbox = document.getElementById('instr-check');
