@@ -31,7 +31,7 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
             padding: 20px;
             box-sizing: border-box;
             text-align: center;
@@ -89,7 +89,7 @@
 			margin-bottom: 15px;
 			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 			transition: all 0.3s ease;
-			max-width: 800px;
+			max-width: 600px;
 			box-sizing: border-box;
 		}
 
@@ -276,6 +276,30 @@
 			background-color: #5d4037;
 		}
 		
+		.btn-accept {
+			display: block;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			background-color: var(--primary-color);
+			color: white !important;
+			text-decoration: none;
+			padding: 12px 15px;
+			border-radius: 50px;
+			font-size: 14px;
+			font-weight: bold;
+			text-align: center;
+			box-shadow: 0 6px 15px rgba(109, 76, 65, 0.3);
+			transition: all 0.2s ease;
+			margin: 20px auto 5px;
+		}
+		
+		.btn-accept:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 15px rgba(109, 76, 65, 0.4);
+			background-color: #5d4037;
+		}
+		
 		.inline-link {
 			color: var(--accent-color);
 			text-decoration: underline;
@@ -303,9 +327,55 @@
 			margin: 5px;
 			margin-bottom: 15px;
 			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-			max-width: 800px;
+			max-width: 600px;
 			box-sizing: border-box;
 			border: 2px dashed var(--accent-color);
+		}
+		
+		.modal-overlay {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.6);
+			z-index: 1000;
+			justify-content: center;
+			align-items: center;
+			backdrop-filter: blur(3px);
+		}
+
+		.modal-window {
+			background-color: white;
+			width: 95%;
+			max-width: 400px;
+			box-sizing: border-box;
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+			padding: 18px;
+			text-align: center;
+			animation: modalSlideUp 0.3s ease-out;
+		}
+
+		.modal-body h3 {
+			color: var(--primary-color);
+			margin-top: 0;
+		}
+
+		.modal-body p {
+			font-size: 16px;
+			line-height: 1.5;
+			margin-bottom: 20px;
+		}
+
+		@keyframes modalSlideUp {
+			from { transform: translateY(50px); opacity: 0; }
+			to { transform: translateY(0); opacity: 1; }
+		}
+
+		.modal-overlay.active {
+			display: flex;
 		}
 		
     </style>
@@ -412,6 +482,21 @@
             Wiadomość z tokenem powinna dotrzeć w ciągu kilku minut (sprawdź SPAM). Problemy z płatnością lub automatem? Kontakt: Jan Wójcik (322097@stud.umk.pl)
         </footer>
     </div>
+	
+	<div id="modal-overlay" class="modal-overlay">
+		<div class="modal-window">
+			<div class="modal-body">
+				<h3>Uwaga!</h3>
+				<p class="important">Jeśli nie wpiszesz w tym polu adresu e-mail, nie otrzymasz tokena!</p>
+				
+				<div class="screenshot-container">
+					<img src="instrukcja_wiadomosc.jpg">
+				</div>
+				
+				<button class="btn-accept" onclick="closeModal()">ROZUMIEM</button>
+			</div>
+		</div>
+	</div>
 
 	<script>
         const DEFAULT_OPEN = false;
@@ -434,6 +519,7 @@
 			if (this.checked) {
 				payLink.classList.remove('disabled');
 				liItem.classList.remove('error-state');
+				openModal();
 			} else {
 				payLink.classList.add('disabled');
 			}
@@ -444,7 +530,7 @@
 				e.preventDefault();			
 				liItem.classList.add('error-state');	
 				liItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				focusSection(event, 'li-instrukcja')
+				focusSection(event, 'li-instrukcja');
 			}
 		});
 		
@@ -462,6 +548,17 @@
 				}, 600);
 			}
 		}
+		
+		function openModal() {
+			document.getElementById('modal-overlay').classList.add('active');
+			document.body.style.overflow = 'hidden';
+		}
+
+		function closeModal() {
+			document.getElementById('modal-overlay').classList.remove('active');
+			document.body.style.overflow = 'auto';
+		}
+
     </script>
 
 </body>
