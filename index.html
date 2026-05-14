@@ -167,48 +167,6 @@
 			border-radius: 12px;
 		}
 		
-		.acceptance-box {
-			margin: 10px 0px 5px 0px;
-			padding: 8px 8px;
-			background-color: #fff9f0;
-			border: 1px solid #e0d0b0;
-			border-radius: 10px;
-			display: flex;
-			align-items: center;
-			gap: 10px;
-			cursor: pointer;
-			transition: all 0.2s ease;
-		}
-		
-		.acceptance-box:hover {
-			background-color: #fdf2e9;
-			border-color: var(--accent-color);
-		}
-		
-		#instr-check {
-			width: 18px;
-			height: 18px;
-			cursor: pointer;
-			accent-color: var(--primary-color);
-			flex-shrink: 0;
-		}
-
-		label.acceptance-box {
-			cursor: pointer;
-			font-size: 14px;
-			line-height: 1.4;
-			color: var(--text-color);
-			user-select: none;
-		}
-
-		li.error-state {
-			border: 2px solid #d32f2f;
-			background-color: rgba(211, 47, 47, 0.05);
-			border-radius: 8px;
-			padding: 10px;
-			transition: all 0.3s ease-in-out;
-		}
-
 		.btn-payment {
 			display: block;
 			background-color: var(--primary-color);
@@ -222,25 +180,19 @@
 			box-shadow: 0 6px 15px rgba(109, 76, 65, 0.3);
 			transition: all 0.2s ease;
 			margin: 20px;
-			margin-top: 40px;
+			margin-top: 25px;
 		}
 
-		.btn-payment:hover:not(.disabled) {
+		.btn-payment:hover {
 			transform: translateY(-1px);
 			box-shadow: 0 8px 15px rgba(109, 76, 65, 0.4);
 			background-color: #5d4037;
 		}
 
-		.btn-payment:active:not(.disabled) {
+		.btn-payment:active: {
 			transform: scale(0.97);
 		}
 
-		.btn-payment.disabled {
-			background-color: #a0a0a0 !important;
-			box-shadow: none !important;
-			opacity: 0.6;
-			cursor: not-allowed;
-		}
 
 		.important {
 			color: #d32f2f;
@@ -275,31 +227,7 @@
 			box-shadow: 0 8px 15px rgba(109, 76, 65, 0.4);
 			background-color: #5d4037;
 		}
-		
-		.btn-accept {
-			display: block;
-			border: none;
-			outline: none;
-			cursor: pointer;
-			background-color: var(--primary-color);
-			color: white !important;
-			text-decoration: none;
-			padding: 12px 15px;
-			border-radius: 50px;
-			font-size: 14px;
-			font-weight: bold;
-			text-align: center;
-			box-shadow: 0 6px 15px rgba(109, 76, 65, 0.3);
-			transition: all 0.2s ease;
-			margin: 20px auto 5px;
-		}
-		
-		.btn-accept:hover {
-			transform: translateY(-1px);
-			box-shadow: 0 8px 15px rgba(109, 76, 65, 0.4);
-			background-color: #5d4037;
-		}
-		
+	
 		.inline-link {
 			color: var(--accent-color);
 			text-decoration: underline;
@@ -332,52 +260,6 @@
 			border: 2px dashed var(--accent-color);
 		}
 		
-		.modal-overlay {
-			display: none;
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background-color: rgba(0, 0, 0, 0.6);
-			z-index: 1000;
-			justify-content: center;
-			align-items: center;
-			backdrop-filter: blur(3px);
-		}
-
-		.modal-window {
-			background-color: white;
-			width: 95%;
-			max-width: 400px;
-			box-sizing: border-box;
-			border-radius: 15px;
-			box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-			padding: 18px;
-			text-align: center;
-			animation: modalSlideUp 0.3s ease-out;
-		}
-
-		.modal-body h3 {
-			color: var(--primary-color);
-			margin-top: 0;
-		}
-
-		.modal-body p {
-			font-size: 16px;
-			line-height: 1.5;
-			margin-bottom: 20px;
-		}
-
-		@keyframes modalSlideUp {
-			from { transform: translateY(50px); opacity: 0; }
-			to { transform: translateY(0); opacity: 1; }
-		}
-
-		.modal-overlay.active {
-			display: flex;
-		}
-		
     </style>
 </head>
 <body>
@@ -390,8 +272,8 @@
 			</div>
 			
 			<div class="dashed-box">
-			<strong>Nowość!</strong> <a href="#" class="inline-link" onclick="focusSection(event, 'sekcja-identyfikatory')">Aplikacja</a> na telefon jako identyfikator do automatu
-		</div>
+				<strong>Nowość!</strong> <a href="#" class="inline-link" onclick="focusSection(event, 'sekcja-identyfikatory')">Aplikacja</a> na telefon jako identyfikator do automatu
+			</div>
 			
 			<div class="wafer-container">
 				<img src="teatralny.png">
@@ -437,26 +319,23 @@
 						<li>Kliknij poniższy przycisk <b>PRZEJDŹ DO PŁATNOŚCI</b>.</li>
 						<li>Wybierz kwotę (wielokrotność <b>2 zł</b>, np. 2, 4, 10 zł).</li>
 						<li>Uzupełnij dane. Zalecamy zaznaczenie opcji <b>"Chcę wesprzeć anonimowo"</b>.</li>
-						<li id="li-instrukcja">
-							<span class="important">Ważne: Zaznacz opcję "Czy chcesz przekazać wiadomość Autorowi?" i w treści wpisz swój adres e-mail.</span>
-							
-							<label class="acceptance-box" for="instr-check">
-								<input type="checkbox" id="instr-check">
-								<span>Rozumiem i zobowiązuję się wypełnić to pole</span>
-							</label>
-						</li>
 						<li>Dokończ transakcję. Na podany adres e-mail otrzymasz jednorazowy token. Wpisz go w automacie (po zbliżeniu identyfikatora i wybraniu opcji <b>Zasil</b>), aby doładować swoje wafelkowe konto.</li>
 					</ol>
 					<b>Od teraz możesz wykorzystywać swój identyfikator i powiązane z nim konto do szybkiego odbierania wafelków. Smacznego!</b>
 					
 					<div class="screenshot-container" id="payment-img">
 						<div class="placeholder-img">
-							<img src="instrukcja.jpg">
+							<img src="instrukcja_platnosci.jpg">
 						</div>
 					</div>
 								
+					
+					<div class="dashed-box">
+						<strong>Uwaga!</strong> Nie trzeba już wpisywać e-maila w polu wiadomości do autora!
+					</div>
 
-					<a href="https://suppi.pl/wafelek" target="_blank" rel="noopener noreferrer" class="btn-payment disabled" id="pay-link">
+
+					<a href="https://suppi.pl/wafelek" target="_blank" rel="noopener noreferrer" class="btn-payment" id="pay-link">
 						PRZEJDŹ DO PŁATNOŚCI
 					</a>
 				</div>
@@ -483,20 +362,6 @@
         </footer>
     </div>
 	
-	<div id="modal-overlay" class="modal-overlay">
-		<div class="modal-window">
-			<div class="modal-body">
-				<h3>Uwaga!</h3>
-				<p class="important">Jeśli nie wpiszesz w tym polu adresu e-mail, nie otrzymasz tokena!</p>
-				
-				<div class="screenshot-container">
-					<img src="instrukcja_wiadomosc.jpg">
-				</div>
-				
-				<button class="btn-accept" onclick="closeModal()">ROZUMIEM</button>
-			</div>
-		</div>
-	</div>
 
 	<script>
         const DEFAULT_OPEN = false;
@@ -510,30 +375,6 @@
 			});
 		});
 
-        const checkbox = document.getElementById('instr-check');
-        const payLink = document.getElementById('pay-link');
-        const container = document.getElementById('check-container');
-		const liItem = document.getElementById('li-instrukcja');
-
-		checkbox.addEventListener('change', function() {
-			if (this.checked) {
-				payLink.classList.remove('disabled');
-				liItem.classList.remove('error-state');
-				openModal();
-			} else {
-				payLink.classList.add('disabled');
-			}
-		});
-
-        payLink.addEventListener('click', function(e) {
-			if (!checkbox.checked) {
-				e.preventDefault();			
-				liItem.classList.add('error-state');	
-				liItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				focusSection(event, 'li-instrukcja');
-			}
-		});
-		
 		function focusSection(event, sectionId) {
 			event.preventDefault();
 			
@@ -548,17 +389,6 @@
 				}, 600);
 			}
 		}
-		
-		function openModal() {
-			document.getElementById('modal-overlay').classList.add('active');
-			document.body.style.overflow = 'hidden';
-		}
-
-		function closeModal() {
-			document.getElementById('modal-overlay').classList.remove('active');
-			document.body.style.overflow = 'auto';
-		}
-
     </script>
 
 </body>
