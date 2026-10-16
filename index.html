@@ -259,7 +259,24 @@
 			box-sizing: border-box;
 			border: 2px dashed var(--accent-color);
 		}
-		
+        /* Zwarty, responsywny podgląd stanu magazynku */
+        .stock-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.1); box-sizing: border-box; margin: 5px auto 15px; max-width: 360px; padding: 20px; text-align: left; width: min(calc(100% - 10px), 360px); }
+        .stock-card[hidden] { display: none; }
+        .stock-heading { margin-bottom: 6px; }
+        .stock-heading h2 { color: var(--primary-color); font-size: 18px; margin: 0; }
+        .stock-main { align-items: center; display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) 128px; }
+        .stock-copy { align-items: center; display: flex; justify-content: center; min-width: 0; text-align: center; }
+        .stock-counter { align-items: center; background: #f5e9d3; border: 2px solid #d3ad65; border-radius: 12px; box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 3px 8px rgba(62,39,35,.12); display: flex; flex-direction: column; justify-content: center; min-width: 78px; padding: 7px 10px; }
+        .stock-count { color: var(--primary-color); font-size: clamp(30px, 7vw, 38px); font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; }
+        .stock-unit { color: #8d6e63; font-size: 11px; font-weight: 600; line-height: 1; margin-top: 3px; }
+        .magazine { display: block; height: auto; width: 128px; }
+        .magazine-wafer { filter: grayscale(1); opacity: .12; transition: opacity .25s ease; }
+        .magazine-wafer.is-filled { filter: none; opacity: 1; }
+        .magazine-package { fill: url(#wafer-gradient); stroke: #573a1a; stroke-width: 1.25; stroke-linejoin: round; }
+        .magazine-crimp { fill: none; stroke: #80551d; stroke-width: .9; }
+        @media (max-width: 380px) { .stock-card { padding: 12px 14px; } .stock-heading { margin-left: 6px; } }
+        @media (prefers-reduced-motion: reduce) { .magazine-wafer { transition: none; } }
+
     </style>
 </head>
 <body>
@@ -279,6 +296,7 @@
 		
 		
 
+        
 		<div class="instructions collapsed">
 			<h2>Jak działa Wafelkomat?</h2>
 			<div class="instructions-content">
@@ -321,7 +339,7 @@
 					
 					<div class="screenshot-container" id="payment-img">
 						<div class="placeholder-img">
-							<img src="instrukcja_platnosci.jpg">
+							<img src="instrukcja_platnosciV2.jpg">
 						</div>
 					</div>
 
@@ -346,6 +364,20 @@
 				</div>
 			</div>
 		</div>
+		
+		
+		<section class="stock-card" id="wafer-stock" aria-labelledby="stock-title" hidden>
+            <div class="stock-heading"><h2 id="stock-title">Stan magazynku wafelków</h2></div>
+            <div class="stock-main">
+                <div class="stock-copy"><div class="stock-counter"><div class="stock-count" id="stock-count" aria-live="polite" aria-atomic="true"></div><div class="stock-unit">szt.</div></div></div>
+                <svg class="magazine" id="magazine" viewBox="0 0 180 330" role="img" aria-label="Pionowy magazynek z wafelkami" xmlns="http://www.w3.org/2000/svg">
+                    <defs><linearGradient id="wafer-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9b8737"/><stop offset=".15" stop-color="#C4AC4E"/><stop offset=".4" stop-color="#C4AC4E"/><stop offset=".5" stop-color="#e0d394"/><stop offset=".6" stop-color="#C4AC4E"/><stop offset=".85" stop-color="#C4AC4E"/><stop offset="1" stop-color="#9b8737"/></linearGradient></defs>
+                    <rect x="38" y="15" width="104" height="300" rx="8" fill="#f8e9d5" stroke="#6d4c41" stroke-width="5"/>
+                    <path d="M34 19h112M34 311h112" fill="none" stroke="#6d4c41" stroke-linecap="round" stroke-width="7"/>
+                    <g id="magazine-slots"></g>
+                </svg>
+            </div>
+        </section>
 
         <footer>
             Wiadomość z tokenem powinna dotrzeć w ciągu kilku minut (sprawdź SPAM). Problemy z płatnością lub automatem? Kontakt: Jan Wójcik (322097@stud.umk.pl)
@@ -353,6 +385,7 @@
     </div>
 	
 
+	<script src="https://cdn.jsdelivr.net/npm/mqtt@5/dist/mqtt.min.js"></script>
 	<script>
         const DEFAULT_OPEN = false;
 
@@ -379,7 +412,61 @@
 				}, 600);
 			}
 		}
-    </script>
+        const MQTT_CONFIG = { url: "wss://h621d36d.ala.eu-central-1.emqxsl.com:8084/mqtt", username: "WafelkomatStrona", password: "ekstremalnietajnehaslowafelkowe", topic: "wafelkomat/magazyn" };
+        const stockCard = document.getElementById('wafer-stock');
+        const stockCount = document.getElementById('stock-count');
+        const magazine = document.getElementById('magazine');
+        const magazineSlots = document.getElementById('magazine-slots');
+        function hideStock() {
+            stockCard.hidden = true;
+            stockCount.textContent = '';
+        }
+        function drawMagazine(count) {
+            if (!magazineSlots.childElementCount) {
+                const slots = [];
+                for (let i = 0; i < 30; i++) {
+                    const y = 299 - i * 9.45;
+                    slots.push(`<g class="magazine-wafer" transform="translate(0 ${y})">
+                        <path class="magazine-package" d="M50 .7 55 0h70l5 .7-2 1.2 2 1.4-2 1.3 2 1.2-5 1.1H55l-5-1.1 2-1.2-2-1.3 2-1.4z"/>
+                        <path class="magazine-crimp" d="M55 1v4.8m3-5v5m64-5v5m3-4.8v4.8"/>
+                    </g>`);
+                }
+                magazineSlots.innerHTML = slots.join('');
+            }
+            magazineSlots.querySelectorAll('.magazine-wafer').forEach((slot, index) => {
+                slot.classList.toggle('is-filled', index < Math.min(count, 30));
+            });
+            magazine.setAttribute('aria-label', `Pionowy magazynek wafelków Teatralny Classic: ${count} sztuk`);
+        }
+        function updateStock(payload) {
+            const raw = new TextDecoder().decode(payload).trim();
+            let value = raw;
+            if (raw.startsWith('{')) {
+                try { const data = JSON.parse(raw); value = data.count ?? data.value; }
+                catch (_) { value = null; }
+            }
+            if (value === null || value === undefined || value === '') { hideStock(); return; }
+            const count = Number(value);
+            if (!Number.isSafeInteger(count) || count < 0) { hideStock(); return; }
+            stockCount.textContent = count.toLocaleString('pl-PL');
+            drawMagazine(count);
+            stockCard.hidden = false;
+        }
+        const mqttConfigReady = !MQTT_CONFIG.url.includes('YOUR_') && !MQTT_CONFIG.username.includes('READ_ONLY_') && !MQTT_CONFIG.password.includes('READ_ONLY_') && !MQTT_CONFIG.topic.includes('YOUR_');
+        hideStock();
+        if (mqttConfigReady && window.mqtt) {
+            const mqttClient = window.mqtt.connect(MQTT_CONFIG.url, { clientId: `wafelek-web-${Math.random().toString(16).slice(2, 10)}`, username: MQTT_CONFIG.username, password: MQTT_CONFIG.password, clean: true, keepalive: 30, connectTimeout: 10000, reconnectPeriod: 3000 });
+            mqttClient.on('connect', () => {
+                hideStock();
+                mqttClient.subscribe(MQTT_CONFIG.topic, { qos: 0 }, error => { if (error) hideStock(); });
+            });
+            mqttClient.on('message', (topic, payload) => { if (topic === MQTT_CONFIG.topic) updateStock(payload); });
+            mqttClient.on('reconnect', hideStock);
+            mqttClient.on('offline', hideStock);
+            mqttClient.on('close', hideStock);
+            mqttClient.on('error', hideStock);
+        }
+	</script>
 
 </body>
 </html>
